@@ -1,20 +1,26 @@
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card"
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./components/ui/card";
+
+import { api } from "./lib/api";
 
 export const App = () => {
-  const [totalSpent, setTotalSpent] = useState<number>(0)
+  const [totalSpent, setTotalSpent] = useState<number>(0);
 
   const fetchTotalSpent = async () => {
-    const res = await fetch('/api/expenses/total-spent')
-    const data = await res.json()
-    setTotalSpent(data.total)
-  }
+    const res = await api.expenses["total-spent"].$get();
+    const data = await res.json();
+    setTotalSpent(data.total);
+  };
 
   useEffect(() => {
-    fetchTotalSpent()
-  }, [])
-
-
+    fetchTotalSpent();
+  }, []);
 
   return (
     <Card>
@@ -24,5 +30,5 @@ export const App = () => {
       </CardHeader>
       <CardContent>{totalSpent}</CardContent>
     </Card>
-  )
-}
+  );
+};

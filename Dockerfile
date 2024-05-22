@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust BUN_VERSION as desired
-ARG BUN_VERSION=1.1.9
+ARG BUN_VERSION=1.0.29
 FROM oven/bun:${BUN_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Bun"
@@ -18,15 +18,24 @@ FROM base as build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
 # Install node modules
 COPY --link bun.lockb package.json ./
 RUN bun install --ci
 
+# Install build node modules
+COPY --link www/bun.lockb www/package.json ./www/
+RUN cd www && bun install --ci
+
 # Copy application code
 COPY --link . .
 
+# Change to frontend directory and build the frontend app
+WORKDIR /app/www
+RUN bun run build
+# Remove all files in frontend except for the dist folder
+RUN find . -mindepth 1 ! -regex '^./dist\(/.*\)?' -delete
 
 # Final stage for app image
 FROM base

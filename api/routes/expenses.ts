@@ -14,7 +14,7 @@ export const expenses = new Hono()
 expenses.get('/', (c) => c.json({ expenses: fakeExpenses }))
 
 expenses.get('/total-spent', (c) => {
-    const total = fakeExpenses.reduce((acc, e) => acc + e.amount, 0).toFixed(2)
+    const total = fakeExpenses.reduce((acc, e) => acc + e.amount, 0)
     return c.json({ total })
 })
 

@@ -29,7 +29,9 @@ function Root() {
     <>
       <NavBar />
       <hr />
-      <Outlet />
+      <main className='max-w-3xl m-auto mt-5'>
+        <Outlet />
+      </main>
       <TanStackRouterDevtools />
     </>
   )

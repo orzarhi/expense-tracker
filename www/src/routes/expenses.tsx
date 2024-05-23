@@ -36,46 +36,44 @@ function Expenses() {
   if (error) return 'An error occurred: ' + error.message;
 
   return (
-    <div className="max-w-3xl p-2 m-auto">
-      <Table>
-        <TableCaption>A list of your expenses.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Id</TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead>Amount</TableHead>
+    <Table>
+      <TableCaption>A list of your expenses.</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[100px]">Id</TableHead>
+          <TableHead>Title</TableHead>
+          <TableHead>Amount</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {isPending ? Array(3).fill(0).map((_, i) => (
+          <TableRow key={i}>
+            <TableCell className="font-medium">
+              <Skeleton className="h-4" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4" />
+            </TableCell>
+            <TableCell>
+              <Skeleton className="h-4" />
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isPending ? Array(3).fill(0).map((_, i) => (
-            <TableRow key={i}>
-              <TableCell className="font-medium">
-                <Skeleton className="h-4" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-4" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-4" />
-              </TableCell>
+        ))
+          : data?.expenses.map((expense: any) => (
+            <TableRow key={expense.id}>
+              <TableCell className="font-medium">{expense.id}</TableCell>
+              <TableCell>{expense.title}</TableCell>
+              <TableCell>{expense.amount}</TableCell>
             </TableRow>
-          ))
-            : data?.expenses.map((expense) => (
-              <TableRow key={expense.id}>
-                <TableCell className="font-medium">{expense.id}</TableCell>
-                <TableCell>{expense.title}</TableCell>
-                <TableCell>{expense.amount}</TableCell>
-              </TableRow>
-            ))}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </div>
+          ))}
+      </TableBody>
+      <TableFooter>
+        <TableRow>
+          <TableCell colSpan={3}>Total</TableCell>
+          <TableCell className="text-right">$2,500.00</TableCell>
+        </TableRow>
+      </TableFooter>
+    </Table>
   )
 }
 

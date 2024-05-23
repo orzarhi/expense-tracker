@@ -1,16 +1,15 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createFileRoute } from '@tanstack/react-router'
-
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
-import type { FieldApi } from '@tanstack/react-form'
-
+import { api } from '@/lib/api'
 export const Route = createFileRoute('/create-expense')({
   component: CreateExpense,
 })
 
 function CreateExpense() {
+  const navigate = useNavigate()
 
   const form = useForm({
     defaultValues: {
@@ -18,8 +17,14 @@ function CreateExpense() {
       amount: 0,
     },
     onSubmit: async ({ value }) => {
-      // Do something with form data
-      console.log(value)
+      await new Promise((resolve) => setTimeout(resolve, 3000))
+
+      const res = await api.expenses.$post({ json: value })
+
+      if (!res.ok) {
+        throw new Error('Failed to create expense')
+      }
+      navigate({ to: '/expenses' })
     },
   })
 
@@ -63,6 +68,8 @@ function CreateExpense() {
                 name={field.name}
                 value={field.state.value}
                 onBlur={field.handleBlur}
+                type='number'
+                inputMode='numeric'
                 onChange={(e) => field.handleChange(+e.target.value)}
               />
               {field.state.meta.touchedErrors ? (
@@ -71,8 +78,14 @@ function CreateExpense() {
             </>
           )}
         />
-
-        <Button className='w-full mt-4 sm:w-24' type="submit">Create</Button>
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <Button type="submit" className='w-full mt-4 sm:w-24' disabled={!canSubmit}>
+              {isSubmitting ? '...' : 'Submit'}
+            </Button>
+          )}
+        />
       </form>
     </div>
   )

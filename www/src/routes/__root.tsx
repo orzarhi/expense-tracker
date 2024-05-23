@@ -2,7 +2,7 @@ import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 export const Route = createRootRoute({
-  component: () => <Root />,
+  component: Root,
 })
 
 function NavBar() {
@@ -18,7 +18,7 @@ function NavBar() {
         Expenses
       </Link>
       <Link to="/create-expense" className="[&.active]:font-bold">
-        Create Expenses
+        Create
       </Link>
     </div>
   )

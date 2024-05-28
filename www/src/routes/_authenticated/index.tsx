@@ -38,7 +38,7 @@ function Index() {
         <CardTitle>Total Spent</CardTitle>
         <CardDescription>The Total amount you've spent</CardDescription>
       </CardHeader>
-      <CardContent className='text-lg font-semibold'>{isLoading ? '...' : formatPrice(data?.total)}</CardContent>
+      <CardContent className='text-lg font-semibold'>{isLoading ? '...' : formatPrice(data)}</CardContent>
     </Card>
   );
 };

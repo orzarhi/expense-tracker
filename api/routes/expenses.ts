@@ -4,7 +4,7 @@ import { createExpenseSchema, type Expense } from "../lib/validators/expenses";
 import { getUser } from '../kinde'
 import { db } from "../db";
 import { expenses as expensesTable } from "../db/schema/expenses";
-import { eq } from "drizzle-orm";
+import { desc, eq, sum, } from "drizzle-orm";
 
 const fakeExpenses: Expense[] = [
     { id: 1, title: 'Car Insurance', amount: '294.67' },
@@ -17,24 +17,35 @@ export const expensesRoute = new Hono()
 
 expensesRoute.get('/', getUser, async (c) => {
     const user = c.var.user
-    const expenses = await db.select().from(expensesTable).where(eq(expensesTable.userId, user.id))
+    const expenses = await db.select()
+        .from(expensesTable)
+        .where(eq(expensesTable.userId, user.id))
+        .orderBy(desc(expensesTable.createAt))
+        .limit(100)
 
     return c.json({ expenses })
 })
 
 expensesRoute.get('/total-spent', getUser, async (c) => {
-    const total = fakeExpenses.reduce((acc, e) => acc + +e.amount, 0)
-    return c.json({ total })
+    const user = c.var.user
+
+    const result = await db.select({ total: sum(expensesTable.amount) })
+        .from(expensesTable)
+        .where(eq(expensesTable.userId, user.id))
+        .limit(1)
+        .then((res) => res[0].total)
+
+    return c.json(result)
 })
 
 expensesRoute.post('/', getUser, zValidator("json", createExpenseSchema), async (c) => {
     const expense = c.req.valid("json")
     const user = c.var.user
 
-    const result = await db.insert(expensesTable).values({
+    const result = db.insert(expensesTable).values({
         ...expense,
         userId: user.id
-    }).returning
+    }).returning().then((res) => res[0])
 
     return c.json({ result }, 201)
 })

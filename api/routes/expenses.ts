@@ -4,7 +4,7 @@ import { createExpenseSchema, type Expense } from "../lib/validators/expenses";
 import { getUser } from '../kinde'
 import { db } from "../db";
 import { expenses as expensesTable } from "../db/schema/expenses";
-import { desc, eq, sum, } from "drizzle-orm";
+import { desc, eq, sum, and } from "drizzle-orm";
 
 const fakeExpenses: Expense[] = [
     { id: 1, title: 'Car Insurance', amount: '294.67' },
@@ -50,9 +50,14 @@ expensesRoute.post('/', getUser, zValidator("json", createExpenseSchema), async 
     return c.json({ result }, 201)
 })
 
-expensesRoute.get('/:id{[0-9]+}', getUser, (c) => {
+expensesRoute.get('/:id{[0-9]+}', getUser, async (c) => {
     const id = +c.req.param("id")
-    const expense = fakeExpenses.find(e => e.id === id)
+    const user = c.var.user
+
+    const expense = await db.select()
+        .from(expensesTable)
+        .where(and(eq(expensesTable.userId, user.id), eq(expensesTable.id, id)))
+        .then((res) => res[0])
 
     if (!expense) {
         return c.notFound()
@@ -62,14 +67,18 @@ expensesRoute.get('/:id{[0-9]+}', getUser, (c) => {
 
 })
 
-expensesRoute.delete('/:id{[0-9]+}', getUser, (c) => {
+expensesRoute.delete('/:id{[0-9]+}', getUser, async (c) => {
     const id = +c.req.param("id")
-    const index = fakeExpenses.findIndex(e => e.id === id)
+    const user = c.var.user
 
-    if (index === -1) {
+    const expense = await db.delete(expensesTable)
+        .where(and(eq(expensesTable.userId, user.id), eq(expensesTable.id, id)))
+        .returning()
+        .then((res) => res[0])
+
+    if (!expense) {
         return c.notFound()
     }
 
-    fakeExpenses.splice(index, 1)
-    return c.json(fakeExpenses)
+    return c.json({ expense })
 })

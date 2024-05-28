@@ -12,6 +12,7 @@ import { api } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
+import { format } from 'date-fns';
 
 export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
@@ -36,6 +37,7 @@ function Expenses() {
 
   if (error) return 'An error occurred: ' + error.message;
 
+  console.log("🚀 ~ Expenses ~ data:", data)
   return (
     <Table>
       <TableCaption>A list of your expenses.</TableCaption>
@@ -44,6 +46,8 @@ function Expenses() {
           <TableHead className="w-[100px]">Id</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Amount</TableHead>
+          <TableHead>CratedAt</TableHead>
+
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -65,6 +69,7 @@ function Expenses() {
               <TableCell className="font-medium">{expense.id}</TableCell>
               <TableCell>{expense.title}</TableCell>
               <TableCell>{formatPrice(expense.amount)}</TableCell>
+              <TableCell>{format(expense.createAt, 'dd/MM/yy HH:mm:ss')}</TableCell>
             </TableRow>
           ))}
       </TableBody>

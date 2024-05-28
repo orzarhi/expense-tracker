@@ -1,2 +1,2 @@
-export { auth } from './auth';
-export { expenses } from './expenses';
+export { authRoute } from './auth';
+export { expensesRoute } from './expenses';

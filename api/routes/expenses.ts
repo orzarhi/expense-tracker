@@ -2,30 +2,44 @@ import { Hono } from "hono";
 import { zValidator } from '@hono/zod-validator'
 import { createExpenseSchema, type Expense } from "../lib/validators/expenses";
 import { getUser } from '../kinde'
+import { db } from "../db";
+import { expenses as expensesTable } from "../db/schema/expenses";
+import { eq } from "drizzle-orm";
 
 const fakeExpenses: Expense[] = [
-    { id: 1, title: 'Car Insurance', amount: 294.67 },
-    { id: 2, title: 'Rent', amount: 1000 },
-    { id: 3, title: 'Groceries', amount: 250.45 },
+    { id: 1, title: 'Car Insurance', amount: '294.67' },
+    { id: 2, title: 'Rent', amount: '1000' },
+    { id: 3, title: 'Groceries', amount: '250.45' },
 
 ]
 
-export const expenses = new Hono()
+export const expensesRoute = new Hono()
 
-expenses.get('/', getUser, (c) => c.json({ expenses: fakeExpenses }))
+expensesRoute.get('/', getUser, async (c) => {
+    const user = c.var.user
+    const expenses = await db.select().from(expensesTable).where(eq(expensesTable.userId, user.id))
 
-expenses.get('/total-spent', getUser, async (c) => {
-    const total = fakeExpenses.reduce((acc, e) => acc + e.amount, 0)
+    return c.json({ expenses })
+})
+
+expensesRoute.get('/total-spent', getUser, async (c) => {
+    const total = fakeExpenses.reduce((acc, e) => acc + +e.amount, 0)
     return c.json({ total })
 })
 
-expenses.post('/', getUser, zValidator("json", createExpenseSchema), (c) => {
+expensesRoute.post('/', getUser, zValidator("json", createExpenseSchema), async (c) => {
     const expense = c.req.valid("json")
-    fakeExpenses.push({ id: fakeExpenses.length + 1, ...expense })
-    return c.json(fakeExpenses, 201)
+    const user = c.var.user
+
+    const result = await db.insert(expensesTable).values({
+        ...expense,
+        userId: user.id
+    }).returning
+
+    return c.json({ result }, 201)
 })
 
-expenses.get('/:id{[0-9]+}', getUser, (c) => {
+expensesRoute.get('/:id{[0-9]+}', getUser, (c) => {
     const id = +c.req.param("id")
     const expense = fakeExpenses.find(e => e.id === id)
 
@@ -37,7 +51,7 @@ expenses.get('/:id{[0-9]+}', getUser, (c) => {
 
 })
 
-expenses.delete('/:id{[0-9]+}', getUser, (c) => {
+expensesRoute.delete('/:id{[0-9]+}', getUser, (c) => {
     const id = +c.req.param("id")
     const index = fakeExpenses.findIndex(e => e.id === id)
 

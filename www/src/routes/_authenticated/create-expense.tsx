@@ -15,7 +15,7 @@ function CreateExpense() {
   const form = useForm({
     defaultValues: {
       title: '',
-      amount: 0,
+      amount: '',
     },
     onSubmit: async ({ value }) => {
       await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -32,8 +32,9 @@ function CreateExpense() {
 
   return (
     <div className="p-2 space-y-5">
-      <h3 className='text-2xl font-semibold'>Create Expense 😥</h3>
+      <h3 className='text-2xl font-semibold'>Create Expense 😣</h3>
       <form
+        className='flex flex-col gap-y-2'
         onSubmit={(e) => {
           e.preventDefault()
           e.stopPropagation()
@@ -63,7 +64,7 @@ function CreateExpense() {
           name="amount"
           children={(field) => (
             <>
-              <Label htmlFor={field.name}>Amount</Label>
+              <Label htmlFor={field.name} className='mt-2'>Amount</Label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -71,7 +72,8 @@ function CreateExpense() {
                 onBlur={field.handleBlur}
                 type='number'
                 inputMode='numeric'
-                onChange={(e) => field.handleChange(+e.target.value)}
+                placeholder='₪199'
+                onChange={(e) => field.handleChange(e.target.value)}
               />
               {field.state.meta.touchedErrors ? (
                 <em>{field.state.meta.touchedErrors}</em>
@@ -82,7 +84,7 @@ function CreateExpense() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <Button type="submit" className='w-full mt-4 sm:w-24' disabled={!canSubmit}>
+            <Button type="submit" className='w-full mt-4 sm:w-36' disabled={!canSubmit}>
               {isSubmitting ? '...' : 'Submit'}
             </Button>
           )}

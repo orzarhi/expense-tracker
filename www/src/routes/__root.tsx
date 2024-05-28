@@ -1,5 +1,5 @@
 import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+// import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 export const Route = createRootRoute({
   component: Root,
@@ -7,7 +7,7 @@ export const Route = createRootRoute({
 
 function NavBar() {
   return (
-    <div className="flex gap-2 p-2 ml-2 space-x-4">
+    <div className="flex gap-2 p-2 ml-2 space-x-4 justify-evenly">
       <Link to="/" className="[&.active]:font-bold">
         Home
       </Link>{' '}
@@ -32,7 +32,7 @@ function Root() {
       <main className='max-w-3xl m-auto mt-5'>
         <Outlet />
       </main>
-      <TanStackRouterDevtools />
+      {/* <TanStackRouterDevtools /> */}
     </>
   )
 }

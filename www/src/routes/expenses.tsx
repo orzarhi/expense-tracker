@@ -1,23 +1,23 @@
-import { api } from '@/lib/api';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router'
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+  TableRow
+} from "@/components/ui/table";
+import { api } from '@/lib/api';
+import { formatPrice } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/expenses')({
   component: Expenses,
 })
 
-async function getAllExpenses() {
+const getAllExpenses = async () => {
   const res = await api.expenses.$get();
   if (!res.ok) {
     throw new Error("Failed to fetch total spent");
@@ -25,6 +25,7 @@ async function getAllExpenses() {
   const data = await res.json();
   return data;
 }
+
 
 
 function Expenses() {
@@ -63,16 +64,10 @@ function Expenses() {
             <TableRow key={expense.id}>
               <TableCell className="font-medium">{expense.id}</TableCell>
               <TableCell>{expense.title}</TableCell>
-              <TableCell>{expense.amount}</TableCell>
+              <TableCell>{formatPrice(expense.amount)}</TableCell>
             </TableRow>
           ))}
       </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
     </Table>
   )
 }

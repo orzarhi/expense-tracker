@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { formatPrice } from '@/lib/utils';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_authenticated/')({
   component: Index,
 })
 
@@ -33,12 +33,12 @@ function Index() {
 
 
   return (
-    <Card>
+    <Card className='m-2 text-center'>
       <CardHeader>
         <CardTitle>Total Spent</CardTitle>
         <CardDescription>The Total amount you've spent</CardDescription>
       </CardHeader>
-      <CardContent>{isLoading ? '...' : formatPrice(data?.total)}</CardContent>
+      <CardContent className='text-lg font-semibold'>{isLoading ? '...' : formatPrice(data?.total)}</CardContent>
     </Card>
   );
 };

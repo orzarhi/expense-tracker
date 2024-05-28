@@ -9,7 +9,7 @@ app.use("*", logger());
 
 const apiRoutes = app.basePath("/api")
     .route("/expenses", expenses)
-    .route("/auth", auth);
+    .route("/", auth);
 
 app.get("*", serveStatic({ root: "./www/dist" }));
 app.get("*", serveStatic({ path: "./www/dist/index.html" }));

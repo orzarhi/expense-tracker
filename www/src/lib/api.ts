@@ -19,6 +19,11 @@ const getCurrentUser = async () => {
 export const userQueryOptions = queryOptions({
     queryKey: ["get-current-user"],
     queryFn: getCurrentUser,
-    staleTime: Infinity
-
+    staleTime: Infinity,
+    retry: 1,
+    retryDelay: 500,
+    refetchInterval: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
 })

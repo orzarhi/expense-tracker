@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from '@hono/zod-validator'
 import { createExpenseSchema, type Expense } from "../lib/validators/expenses";
+import { getUser } from '../kinde'
 
 const fakeExpenses: Expense[] = [
     { id: 1, title: 'Car Insurance', amount: 294.67 },
@@ -11,20 +12,20 @@ const fakeExpenses: Expense[] = [
 
 export const expenses = new Hono()
 
-expenses.get('/', (c) => c.json({ expenses: fakeExpenses }))
+expenses.get('/', getUser, (c) => c.json({ expenses: fakeExpenses }))
 
-expenses.get('/total-spent', async (c) => {
+expenses.get('/total-spent', getUser, async (c) => {
     const total = fakeExpenses.reduce((acc, e) => acc + e.amount, 0)
     return c.json({ total })
 })
 
-expenses.post('/', zValidator("json", createExpenseSchema), (c) => {
+expenses.post('/', getUser, zValidator("json", createExpenseSchema), (c) => {
     const expense = c.req.valid("json")
     fakeExpenses.push({ id: fakeExpenses.length + 1, ...expense })
     return c.json(fakeExpenses, 201)
 })
 
-expenses.get('/:id{[0-9]+}', (c) => {
+expenses.get('/:id{[0-9]+}', getUser, (c) => {
     const id = +c.req.param("id")
     const expense = fakeExpenses.find(e => e.id === id)
 
@@ -36,7 +37,7 @@ expenses.get('/:id{[0-9]+}', (c) => {
 
 })
 
-expenses.delete('/:id{[0-9]+}', (c) => {
+expenses.delete('/:id{[0-9]+}', getUser, (c) => {
     const id = +c.req.param("id")
     const index = fakeExpenses.findIndex(e => e.id === id)
 

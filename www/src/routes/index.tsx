@@ -16,7 +16,7 @@ export const Route = createFileRoute('/')({
   component: Index,
 })
 
-async function getTotalSpent() {
+const getTotalSpent = async () => {
   const res = await api.expenses["total-spent"].$get();
   if (!res.ok) {
     throw new Error("Failed to fetch total spent");

@@ -1,6 +1,7 @@
-import { createKindeServerClient, GrantType, type SessionManager } from "@kinde-oss/kinde-typescript-sdk";
+import { createKindeServerClient, GrantType, type SessionManager, type UserType } from "@kinde-oss/kinde-typescript-sdk";
 import { type Context } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { createMiddleware } from 'hono/factory';
 
 export const kindeClient = createKindeServerClient(GrantType.AUTHORIZATION_CODE, {
     authDomain: process.env.KINDE_DOMAIN!,
@@ -10,7 +11,6 @@ export const kindeClient = createKindeServerClient(GrantType.AUTHORIZATION_CODE,
     logoutRedirectURL: process.env.KINDE_LOGOUT_REDIRECT_URI!,
 });
 
-let store: Record<string, unknown> = {};
 
 export const sessionManager = (c: Context): SessionManager => ({
     async getSessionItem(key: string) {
@@ -38,3 +38,29 @@ export const sessionManager = (c: Context): SessionManager => ({
         });
     },
 });
+
+type Env = {
+    Variables: {
+        user: UserType
+    }
+}
+
+
+export const getUser = createMiddleware<Env>(async (c, next) => {
+    try {
+        const manager = sessionManager(c);
+
+        const isAuthenticated = await kindeClient.isAuthenticated(manager);
+        if (!isAuthenticated) {
+            return c.json({ error: "Unauthorized" }, 401);
+        }
+
+        const user = await kindeClient.getUserProfile(manager);
+        c.set("user", user);
+
+        await next();
+    } catch (error) {
+        console.error(error);
+        return c.json({ error: "Unauthorized" }, 401);
+    }
+})

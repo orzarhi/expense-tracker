@@ -3,6 +3,7 @@ import { insertExpensesSchema } from "./db/schema/expenses";
 
 export const createExpenseSchema = insertExpensesSchema.omit({
     userId: true,
+    id: true,
     createdAt: true,
 });
 

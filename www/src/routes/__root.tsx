@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { useQuery, type QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { Toaster } from "@/components/ui/sonner"
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -51,6 +52,7 @@ function Root() {
       <main className='max-w-3xl m-auto mt-5'>
         <Outlet />
       </main>
+      <Toaster />
       {/* <TanStackRouterDevtools /> */}
     </>
   )

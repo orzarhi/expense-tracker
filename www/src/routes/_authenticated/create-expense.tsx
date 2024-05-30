@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { api, getAllExpensesQueryOptions } from '@/lib/api'
+import { api, createExpense, getAllExpensesQueryOptions, loadingCreateExpenseQueryOptions } from '@/lib/api'
 import { createExpenseSchema } from '@api/sharedTypes'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -9,6 +9,7 @@ import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Calendar } from "@/components/ui/calendar"
 import { format } from 'date-fns'
 import { QueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
@@ -29,20 +30,26 @@ function CreateExpense() {
     onSubmit: async ({ value }) => {
       const existingExpenses = await queryClient.ensureQueryData(getAllExpensesQueryOptions)
 
-      const res = await api.expenses.$post({ json: value })
-
-      if (!res.ok) {
-        throw new Error('Failed to create expense')
-      }
-
-      const newExpense = await res.json()
-
-      queryClient.setQueryData(getAllExpensesQueryOptions.queryKey, ({
-        ...existingExpenses,
-        expenses: [newExpense, ...existingExpenses.expenses],
-      }))
-
       navigate({ to: '/expenses' })
+
+      queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, { expense: value })
+
+      try {
+        const newExpense = await createExpense({ value })
+        debugger;
+        queryClient.setQueryData(getAllExpensesQueryOptions.queryKey, ({
+          ...existingExpenses,
+          expenses: [newExpense, ...existingExpenses.expenses],
+        }))
+        toast.success("Expense Created", {
+          description: `Successfully created expense: ${newExpense.id}`
+        })
+      } catch (error) {
+        toast.error("Failed to create expense")
+      } finally {
+        queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, {})
+
+      }
     },
   })
 

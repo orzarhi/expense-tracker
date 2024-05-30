@@ -3,7 +3,7 @@ import { zValidator } from '@hono/zod-validator'
 import { createExpenseSchema } from "../sharedTypes";
 import { getUser } from '../kinde'
 import { db } from "../db";
-import { expenses as expensesTable } from "../db/schema/expenses";
+import { expenses as expensesTable, insertExpensesSchema, selectExpensesSchema } from "../db/schema/expenses";
 import { desc, eq, sum, and } from "drizzle-orm";
 
 export const expensesRoute = new Hono()
@@ -13,7 +13,7 @@ expensesRoute.get('/', getUser, async (c) => {
     const expenses = await db.select()
         .from(expensesTable)
         .where(eq(expensesTable.userId, user.id))
-        .orderBy(desc(expensesTable.createAt))
+        .orderBy(desc(expensesTable.createdAt))
         .limit(100)
 
     return c.json({ expenses })
@@ -35,12 +35,17 @@ expensesRoute.post('/', getUser, zValidator("json", createExpenseSchema), async 
     const expense = c.req.valid("json")
     const user = c.var.user
 
-    const result = db.insert(expensesTable).values({
+    const validatedExpense = insertExpensesSchema.parse({
         ...expense,
         userId: user.id
-    }).returning().then((res) => res[0])
+    })
 
-    return c.json({ result }, 201)
+    const result = db
+        .insert(expensesTable)
+        .values(validatedExpense)
+        .returning().then((res) => res[0]);
+
+    return c.json(result, 201)
 })
 
 expensesRoute.get('/:id{[0-9]+}', getUser, async (c) => {

@@ -67,7 +67,7 @@ function Expenses() {
               <TableCell className="font-medium">{expense.id}</TableCell>
               <TableCell>{expense.title}</TableCell>
               <TableCell>{formatPrice(expense.amount)}</TableCell>
-              <TableCell>{format(expense.createAt, 'dd/MM/yy HH:mm:ss')}</TableCell>
+              <TableCell>{format(expense.createdAt, 'dd/MM/yy HH:mm:ss')}</TableCell>
             </TableRow>
           ))}
       </TableBody>

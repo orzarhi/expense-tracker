@@ -6,6 +6,7 @@ import { createExpenseSchema } from '@api/sharedTypes'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-form-adapter'
+import { Calendar } from "@/components/ui/calendar"
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
@@ -19,6 +20,7 @@ function CreateExpense() {
     defaultValues: {
       title: '',
       amount: '',
+      date: new Date().toISOString(),
     },
     onSubmit: async ({ value }) => {
       const res = await api.expenses.$post({ json: value })
@@ -87,6 +89,25 @@ function CreateExpense() {
                 <em className='text-sm font-semibold text-red-500'>{field.state.meta.touchedErrors}</em>
               ) : null}
             </>
+          )}
+        />
+        <form.Field
+          name="date"
+          validators={{
+            onChange: createExpenseSchema.shape.date,
+          }}
+          children={(field) => (
+            <div className='self-center'>
+              <Calendar
+                mode="single"
+                selected={new Date(field.state.value)}
+                onSelect={(date) => field.handleChange((date ?? new Date()).toISOString())}
+                className="p-2 border rounded-md"
+              />
+              {field.state.meta.touchedErrors ? (
+                <em className='text-sm font-semibold text-red-500'>{field.state.meta.touchedErrors}</em>
+              ) : null}
+            </div>
           )}
         />
         <form.Subscribe

@@ -79,6 +79,7 @@ function CreateExpense() {
                 onBlur={field.handleBlur}
                 type='number'
                 inputMode='numeric'
+                min={1}
                 placeholder='₪199'
                 onChange={(e) => field.handleChange(e.target.value)}
               />

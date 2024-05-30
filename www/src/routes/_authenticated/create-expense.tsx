@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useForm } from '@tanstack/react-form'
 import { api } from '@/lib/api'
+import { createExpenseSchema } from '@api/sharedTypes'
+import { useForm } from '@tanstack/react-form'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
@@ -13,6 +15,7 @@ function CreateExpense() {
   const navigate = useNavigate()
 
   const form = useForm({
+    validatorAdapter: zodValidator,
     defaultValues: {
       title: '',
       amount: '',
@@ -41,6 +44,9 @@ function CreateExpense() {
       >
         <form.Field
           name="title"
+          validators={{
+            onChange: createExpenseSchema.shape.title,
+          }}
           children={(field) => (
             <>
               <Label htmlFor={field.name}>Title</Label>
@@ -52,7 +58,7 @@ function CreateExpense() {
                 onChange={(e) => field.handleChange(e.target.value)}
               />
               {field.state.meta.touchedErrors ? (
-                <em>{field.state.meta.touchedErrors}</em>
+                <em className='text-sm font-semibold text-red-500'>{field.state.meta.touchedErrors}</em>
               ) : null}
             </>
           )}
@@ -60,6 +66,9 @@ function CreateExpense() {
 
         <form.Field
           name="amount"
+          validators={{
+            onChange: createExpenseSchema.shape.amount,
+          }}
           children={(field) => (
             <>
               <Label htmlFor={field.name} className='mt-2'>Amount</Label>
@@ -74,7 +83,7 @@ function CreateExpense() {
                 onChange={(e) => field.handleChange(e.target.value)}
               />
               {field.state.meta.touchedErrors ? (
-                <em>{field.state.meta.touchedErrors}</em>
+                <em className='text-sm font-semibold text-red-500'>{field.state.meta.touchedErrors}</em>
               ) : null}
             </>
           )}

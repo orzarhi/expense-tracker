@@ -1,17 +1,10 @@
 import { Hono } from "hono";
 import { zValidator } from '@hono/zod-validator'
-import { createExpenseSchema, type Expense } from "../lib/validators/expenses";
+import { createExpenseSchema } from "../sharedTypes";
 import { getUser } from '../kinde'
 import { db } from "../db";
 import { expenses as expensesTable } from "../db/schema/expenses";
 import { desc, eq, sum, and } from "drizzle-orm";
-
-const fakeExpenses: Expense[] = [
-    { id: 1, title: 'Car Insurance', amount: '294.67' },
-    { id: 2, title: 'Rent', amount: '1000' },
-    { id: 3, title: 'Groceries', amount: '250.45' },
-
-]
 
 export const expensesRoute = new Hono()
 

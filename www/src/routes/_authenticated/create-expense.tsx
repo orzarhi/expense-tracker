@@ -7,6 +7,7 @@ import { useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Calendar } from "@/components/ui/calendar"
+import { format } from 'date-fns'
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
@@ -23,6 +24,7 @@ function CreateExpense() {
       date: new Date().toISOString(),
     },
     onSubmit: async ({ value }) => {
+      console.log("🚀 ~ onSubmit: ~ value:", value)
       const res = await api.expenses.$post({ json: value })
 
       if (!res.ok) {
@@ -101,8 +103,12 @@ function CreateExpense() {
               <Calendar
                 mode="single"
                 selected={new Date(field.state.value)}
-                onSelect={(date) => field.handleChange((date ?? new Date()).toISOString())}
-                className="p-2 border rounded-md"
+                onSelect={(date) => {
+                  const selectedDate = date ?? new Date();
+                  const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+                  field.handleChange(formattedDate);
+                }}
+                className=""
               />
               {field.state.meta.touchedErrors ? (
                 <em className='text-sm font-semibold text-red-500'>{field.state.meta.touchedErrors}</em>

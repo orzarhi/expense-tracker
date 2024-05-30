@@ -1,19 +1,22 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { api } from '@/lib/api'
+import { api, getAllExpensesQueryOptions } from '@/lib/api'
 import { createExpenseSchema } from '@api/sharedTypes'
 import { useForm } from '@tanstack/react-form'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Calendar } from "@/components/ui/calendar"
 import { format } from 'date-fns'
+import { QueryClient } from '@tanstack/react-query'
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
   component: CreateExpense,
 })
 
 function CreateExpense() {
+  const queryClient = new QueryClient()
+
   const navigate = useNavigate()
 
   const form = useForm({
@@ -24,12 +27,21 @@ function CreateExpense() {
       date: new Date().toISOString(),
     },
     onSubmit: async ({ value }) => {
-      console.log("🚀 ~ onSubmit: ~ value:", value)
+      const existingExpenses = await queryClient.ensureQueryData(getAllExpensesQueryOptions)
+
       const res = await api.expenses.$post({ json: value })
 
       if (!res.ok) {
         throw new Error('Failed to create expense')
       }
+
+      const newExpense = await res.json()
+
+      queryClient.setQueryData(getAllExpensesQueryOptions.queryKey, ({
+        ...existingExpenses,
+        expenses: [newExpense, ...existingExpenses.expenses],
+      }))
+
       navigate({ to: '/expenses' })
     },
   })

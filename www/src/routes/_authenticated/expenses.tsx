@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { api } from '@/lib/api';
+import { getAllExpensesQueryOptions } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -18,22 +18,8 @@ export const Route = createFileRoute('/_authenticated/expenses')({
   component: Expenses,
 })
 
-const getAllExpenses = async () => {
-  const res = await api.expenses.$get();
-  if (!res.ok) {
-    throw new Error("Failed to fetch total spent");
-  }
-  const data = await res.json();
-  return data;
-}
-
-
-
 function Expenses() {
-  const { data, error, isPending } = useQuery({
-    queryKey: ["get-total-expenses"],
-    queryFn: getAllExpenses,
-  })
+  const { data, error, isPending } = useQuery(getAllExpensesQueryOptions)
 
   if (error) return 'An error occurred: ' + error.message;
 

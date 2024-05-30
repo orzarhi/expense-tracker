@@ -40,7 +40,7 @@ expensesRoute.post('/', getUser, zValidator("json", createExpenseSchema), async 
         userId: user.id
     })
 
-    const result = db
+    const result = await db
         .insert(expensesTable)
         .values(validatedExpense)
         .returning().then((res) => res[0]);

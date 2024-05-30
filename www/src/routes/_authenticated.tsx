@@ -6,8 +6,8 @@ import logo from "../assets/images/logo.webp";
 const Login = () => {
   return (
     <div className="flex flex-col items-center gap-y-2">
-      <img src={logo} alt="logo" width={80} height={10} className="" />
-      <h3 className="text-lg font-semibold">You have to login or register</h3>
+      <img src={logo} alt="logo" width={80} className="z-0 -mb-2" />
+      <h3 className="z-50 text-lg font-semibold">You have to login or register</h3>
       <div className="flex flex-col gap-y-4">
         <Button asChild className="w-44">
           <a href="/api/login">Login</a>

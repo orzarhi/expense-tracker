@@ -37,7 +37,6 @@ function Expenses() {
 
   if (error) return 'An error occurred: ' + error.message;
 
-  console.log("🚀 ~ Expenses ~ data:", data)
   return (
     <Table>
       <TableCaption>A list of your expenses.</TableCaption>
@@ -47,7 +46,6 @@ function Expenses() {
           <TableHead>Title</TableHead>
           <TableHead>Amount</TableHead>
           <TableHead>CratedAt</TableHead>
-
         </TableRow>
       </TableHeader>
       <TableBody>

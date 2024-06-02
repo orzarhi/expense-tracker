@@ -1,11 +1,10 @@
 import { type ApiRoutes } from "@api/app";
+import { type CreateExpense } from "@api/sharedTypes";
 import { queryOptions } from "@tanstack/react-query";
 import { hc } from "hono/client";
-import { type CreateExpense } from "@api/sharedTypes";
 
 const client = hc<ApiRoutes>("/");
 
-// @ts-ignore
 export const api = client.api;
 
 const getCurrentUser = async () => {
@@ -21,12 +20,6 @@ export const userQueryOptions = queryOptions({
     queryKey: ["get-current-user"],
     queryFn: getCurrentUser,
     staleTime: Infinity,
-    retry: 1,
-    retryDelay: 500,
-    refetchInterval: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
 })
 
 export const getAllExpenses = async () => {

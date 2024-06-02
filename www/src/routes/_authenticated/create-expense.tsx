@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button'
+import { Calendar } from "@/components/ui/calendar"
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { api, createExpense, getAllExpensesQueryOptions, loadingCreateExpenseQueryOptions } from '@/lib/api'
+import { createExpense, getAllExpensesQueryOptions, loadingCreateExpenseQueryOptions } from '@/lib/api'
 import { createExpenseSchema } from '@api/sharedTypes'
 import { useForm } from '@tanstack/react-form'
+import { QueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-form-adapter'
-import { Calendar } from "@/components/ui/calendar"
 import { format } from 'date-fns'
-import { QueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 export const Route = createFileRoute('/_authenticated/create-expense')({
@@ -36,7 +36,7 @@ function CreateExpense() {
 
       try {
         const newExpense = await createExpense({ value })
-        debugger;
+
         queryClient.setQueryData(getAllExpensesQueryOptions.queryKey, ({
           ...existingExpenses,
           expenses: [newExpense, ...existingExpenses.expenses],

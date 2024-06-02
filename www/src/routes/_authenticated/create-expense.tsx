@@ -29,7 +29,7 @@ function CreateExpense() {
     },
     onSubmit: async ({ value }) => {
       const existingExpenses = await queryClient.ensureQueryData(getAllExpensesQueryOptions)
-      // debugger
+
       navigate({ to: '/expenses' })
 
       queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, { expense: value })
@@ -52,7 +52,6 @@ function CreateExpense() {
       }
     },
   })
-
 
   return (
     <div className="p-2 space-y-5">

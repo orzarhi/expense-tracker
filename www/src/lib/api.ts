@@ -38,7 +38,6 @@ export const getAllExpensesQueryOptions = queryOptions({
 })
 
 export const createExpense = async ({ value }: { value: CreateExpense }) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
     const res = await api.expenses.$post({ json: value })
 
     if (!res.ok) {
@@ -56,3 +55,13 @@ export const loadingCreateExpenseQueryOptions = queryOptions<{ expense?: CreateE
     },
     staleTime: Infinity,
 })
+
+export const deleteExpense = async ({ id }: { id: number }) => {
+    const res = await api.expenses[":id{[0-9]+}"].$delete({
+        param: { id: id.toString() },
+    });
+
+    if (!res.ok) {
+        throw new Error("server error");
+    }
+}

@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import { createExpense, getAllExpensesQueryOptions, loadingCreateExpenseQueryOptions } from '@/lib/api'
 import { createExpenseSchema } from '@api/sharedTypes'
 import { useForm } from '@tanstack/react-form'
-import { QueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodValidator } from '@tanstack/zod-form-adapter'
 import { format } from 'date-fns'
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/_authenticated/create-expense')({
 })
 
 function CreateExpense() {
-  const queryClient = new QueryClient()
+  const queryClient = useQueryClient()
 
   const navigate = useNavigate()
 
@@ -29,7 +29,7 @@ function CreateExpense() {
     },
     onSubmit: async ({ value }) => {
       const existingExpenses = await queryClient.ensureQueryData(getAllExpensesQueryOptions)
-
+      // debugger
       navigate({ to: '/expenses' })
 
       queryClient.setQueryData(loadingCreateExpenseQueryOptions.queryKey, { expense: value })

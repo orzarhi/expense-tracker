@@ -1,10 +1,10 @@
+import { zValidator } from '@hono/zod-validator';
+import { and, desc, eq, sum } from "drizzle-orm";
 import { Hono } from "hono";
-import { zValidator } from '@hono/zod-validator'
-import { createExpenseSchema } from "../sharedTypes";
-import { getUser } from '../kinde'
 import { db } from "../db";
-import { expenses as expensesTable, insertExpensesSchema, selectExpensesSchema } from "../db/schema/expenses";
-import { desc, eq, sum, and } from "drizzle-orm";
+import { expenses as expensesTable, insertExpensesSchema } from "../db/schema/expenses";
+import { getUser } from '../kinde';
+import { createExpenseSchema } from "../sharedTypes";
 
 export const expensesRoute = new Hono()
     .get('/', getUser, async (c) => {
@@ -19,6 +19,7 @@ export const expensesRoute = new Hono()
 
         return c.json({ expenses })
     })
+
     .get('/total-spent', getUser, async (c) => {
         const user = c.var.user
 

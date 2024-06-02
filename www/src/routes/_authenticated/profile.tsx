@@ -18,6 +18,7 @@ function Profile() {
         return <div>Not loggedIn</div>
     }
 
+    //@ts-ignore
     const { id, sub, picture, updated_at, preferred_username, ...user } = data.user;
 
     return (
@@ -27,7 +28,7 @@ function Profile() {
             </pre>
 
             <Button className='mt-8 w-28' asChild>
-                <a href="api/logout">
+                <a href="/api/logout">
                     Logout 🚪
                 </a>
             </Button>

@@ -31,14 +31,13 @@ function Index() {
     queryFn: getTotalSpent,
   })
 
-
   return (
     <Card className='m-2 text-center'>
       <CardHeader>
         <CardTitle>Total Spent</CardTitle>
         <CardDescription>The Total amount you've spent</CardDescription>
       </CardHeader>
-      <CardContent className='text-lg font-semibold'>{isLoading ? '...' : formatPrice(data)}</CardContent>
+      <CardContent className='text-lg font-semibold'>{isLoading ? '...' : formatPrice(data ?? 0)}</CardContent>
     </Card>
   );
 };

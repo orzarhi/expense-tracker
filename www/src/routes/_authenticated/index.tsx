@@ -32,12 +32,15 @@ function Index() {
   })
 
   return (
-    <Card className='m-2 text-center'>
-      <CardHeader>
-        <CardTitle>Total Spent</CardTitle>
-        <CardDescription>The Total amount you've spent</CardDescription>
-      </CardHeader>
-      <CardContent className='text-lg font-semibold'>{isLoading ? '...' : formatPrice(data ?? 0)}</CardContent>
-    </Card>
+    <>
+      <h1 className='text-3xl font-bold text-center underline'>Expense Tracker </h1>
+      <Card className='m-2 text-center'>
+        <CardHeader>
+          <CardTitle>Total Spent</CardTitle>
+          <CardDescription>The Total amount you've spent</CardDescription>
+        </CardHeader>
+        <CardContent className='text-lg font-semibold'>{isLoading ? '...' : formatPrice(data ?? 0)}</CardContent>
+      </Card>
+    </>
   );
 };

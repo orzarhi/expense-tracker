@@ -90,6 +90,7 @@ function Expenses() {
 
 function ExpenseDeleteButton({ id }: { id: number }) {
   const queryClient = useQueryClient();
+
   const mutation = useMutation({
     mutationFn: deleteExpense,
     onError: () => {
@@ -116,11 +117,10 @@ function ExpenseDeleteButton({ id }: { id: number }) {
     <Button
       disabled={mutation.isPending}
       onClick={() => mutation.mutate({ id })}
-
       size='icon'
       variant='outline'
     >
-      <Trash className="text-red-500 size-4" />
+      {mutation.isPending ? '...' : <Trash className="text-red-500 size-4" />}
     </Button>
   )
 }

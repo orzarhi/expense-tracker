@@ -4,6 +4,7 @@ import { useQuery, type QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
 // import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { Toaster } from "@/components/ui/sonner"
+import { Home, ScrollText, SquarePlus, User } from 'lucide-react'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -17,28 +18,28 @@ function NavBar() {
 
   return (
     <div className="flex gap-2 p-2 ml-2 space-x-4 justify-evenly">
-      <Link to="/" className={cn("[&.active]:font-bold", {
+      <Link to="/" className={cn("flex gap-2 [&.active]:font-bold", {
         'text-zinc-600': !data,
       })} disabled={!data}>
-        Home
+        <Home className='hidden my-auto size-4 sm:block' /> Home
       </Link> |
       {/* <Link to="/about" className="[&.active]:font-bold">
         About
       </Link> | */}
-      <Link to="/expenses" className={cn("[&.active]:font-bold", {
+      <Link to="/expenses" className={cn("flex gap-2 [&.active]:font-bold", {
         'text-zinc-600': !data,
       })} disabled={!data}>
-        Expenses
+        <ScrollText className='hidden my-auto size-4 sm:block' /> Expenses
       </Link> |
-      <Link to="/create-expense" className={cn("[&.active]:font-bold", {
+      <Link to="/create-expense" className={cn("flex gap-2 [&.active]:font-bold", {
         'text-zinc-600': !data,
       })} disabled={!data}>
-        Create
+        <SquarePlus className='hidden my-auto size-4 sm:block' /> Create
       </Link> |
-      <Link to="/profile" className={cn("[&.active]:font-bold", {
+      <Link to="/profile" className={cn("flex gap-2 [&.active]:font-bold", {
         'text-zinc-600': !data,
       })} disabled={!data}>
-        Profile
+        <User className='hidden my-auto size-4 sm:block' /> Profile
       </Link>
     </div>
   )
@@ -49,7 +50,7 @@ function Root() {
     <>
       <NavBar />
       <hr />
-      <main className='max-w-3xl m-auto mt-5'>
+      <main className='max-w-3xl m-auto mt-7'>
         <Outlet />
       </main>
       <Toaster />
